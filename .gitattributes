@@ -1,0 +1,12 @@
+# 统一换行符：仓库内一律 LF，避免 Windows 检出时把整仓文件标记为改动。
+# 这是规格仓库，正文以 Markdown 为主，统一 LF 对 diff 最友好。
+* text=auto eol=lf
+
+# 明确二进制的类型（本仓库当前没有，留作约定）
+*.png binary
+*.jpg binary
+*.pdf binary
+*.zip binary
+
+# 在 GitHub 上把 schema 识别为 JSON，便于语法高亮与校验
+*.schema.json linguist-language=JSON

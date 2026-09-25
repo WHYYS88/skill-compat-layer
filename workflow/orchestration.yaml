@@ -1,0 +1,201 @@
+# ============================================================================
+# 流程编排定义 / Workflow Orchestration
+# ============================================================================
+# 这是一份**声明式**的编排文件：它规定整条流水线长什么形状 ——
+# 阶段顺序、每阶段的输入输出契约、谁能产出、失败时回滚什么、断点在哪触发。
+#
+# 它不含任何算法或实现代码。任何团队都可以拿这份定义去搭自己的执行器，
+# 或者改成适合自己场景的阶段划分。
+#
+# 配套文档：
+#   overview.md        —— 信封、血缘、幂等、回滚语义
+#   contracts.md       —— 五份契约的载荷字段
+#   criteria.md        —— 断点判定尺度
+#   interventions.md   —— 九种原因码与退出码
+#   safety.md          —— 什么故障必须即刻切断
+#   adapters.md        —— 适配器实现契约
+# ============================================================================
+
+workflow_version: "1.0.0"
+contract_schema_version: "1.0.0"
+
+# ---------------------------------------------------------------------------
+# 运行环境约定
+# ---------------------------------------------------------------------------
+environment:
+  # Windows 控制台默认 cp936，子进程需显式 UTF-8，否则 JSON 输出会被解码坏
+  PYTHONUTF8: "1"
+  # =1 时血缘与落盘时间戳由输入派生，同输入产出逐字节一致
+  AITOCI_DETERMINISTIC: "0"
+
+# ---------------------------------------------------------------------------
+# 安全接口：致命故障即刻切断（详见 safety.md）
+# ---------------------------------------------------------------------------
+breaker:
+  policy: default            # off | default | strict
+  hard_stop_reasons:         # 命中即刻切断，后续阶段不再执行
+    - payload_schema_mismatch      # 契约字段对不上 = 接口已失效
+    - unsupported_transformation   # 做不了的转换
+    - data_quality_blocker         # 数据本身不可用
+    - ambiguous_semantics          # 语义未定，下游可能误读
+  strict_extra_reasons:      # 仅 strict 策略下也切断（"降级冒充"风险）
+    - renderer_unavailable
+    - dependency_undeclared
+    - entry_not_documented
+    - prompt_only_skill
+    - format_undeclared
+  callable_check: true       # 阶段产出后调用契约自带的 validate()
+  verify_upstream_hash: true # 本阶段执行期间，上游契约不得被改写
+
+# ---------------------------------------------------------------------------
+# 阶段定义
+# ---------------------------------------------------------------------------
+# 每阶段的字段含义：
+#   contract_in / contract_out  输入/输出的契约类型
+#   adapter                     负责转换的适配器名（实现由使用方提供）
+#   producer.kinds              谁能产出：skill / adapter / generator / human
+#   requires                    前置阶段
+#   skill_gate                  技能门禁：不满足就不许自动执行
+#   on_human_intervention       遇到断点时的默认动作（blocking 一律中断本阶段）
+#   failure_rollback            失败时清理什么 + 如何验证上游未被破坏
+# ---------------------------------------------------------------------------
+
+stages:
+
+  - id: S1_simulate
+    name: 模拟数据生成
+    contract_in: null
+    contract_out: SimulatedDataset
+    adapter: null
+    producer:
+      kinds: [generator, human]
+      note: >-
+        技能库中通常没有能产出"可分析数据集"的技能（它们多是医学教育/方案资产）。
+        因此本阶段一般由生成器或人工投递承担。
+    requires: []
+    on_human_intervention: abort
+    failure_rollback:
+      action: cleanup
+      description: 删除本阶段契约副本；不改动人类投递的原始 CSV/JSON
+      targets: ["outputs/_workflow/S1/**"]
+      verify: 确认该目录下不再有本阶段契约副本
+
+  - id: S2_process
+    name: 数据处理
+    contract_in: SimulatedDataset
+    contract_out: CleanDataset
+    adapter: sim_to_clean
+    producer:
+      kinds: [skill, adapter]
+    requires: [S1_simulate]
+    on_human_intervention: continue_with_degraded   # BLOCK 仍会中断；WARN 放行
+    failure_rollback:
+      action: cleanup
+      description: 删除本阶段契约副本与自身临时文件；上游 S1 契约只读，不删
+      targets: ["outputs/_workflow/S2/**"]
+      verify: "S1 契约文件的 sha256 与运行前一致"
+
+  - id: S3_analyze
+    name: 数据分析
+    contract_in: CleanDataset
+    contract_out: AnalysisResult
+    adapter: clean_to_analysis
+    producer:
+      kinds: [skill]
+    requires: [S2_process]
+    skill_gate:
+      # 这是整条流水线最关键的一道门：没实测过的技能不许自动执行
+      require_verified: true
+      reject_if:
+        - prompt_only_skill
+        - entry_not_documented
+        - format_undeclared
+        - dependency_undeclared
+    on_human_intervention: continue_with_degraded
+    failure_rollback:
+      action: cleanup
+      description: 删除本阶段分析产物与技能工作目录；保留人工投递的结果文件（供复用）
+      targets:
+        - "outputs/_workflow/S3/**"
+        - "outputs/<skill_id>/<contract_id>/**"
+      verify: "S2 契约与人工投递文件均未被修改"
+
+  - id: S4_figure
+    name: 制图
+    contract_in: AnalysisResult
+    contract_out: FigureArtifact
+    adapter: render_to_figure
+    producer:
+      kinds: [skill, adapter]
+    requires: [S3_analyze]
+    # 各图型需要哪些统计量才画得出来
+    figure_types:
+      forest:  { requires_metrics: [estimate, ci_low, ci_high] }
+      volcano: { requires_metrics: [log2FoldChange, p_value] }
+      roc:     { requires_metrics: [auc] }
+      km:      { requires_metrics: [time, event] }
+    on_human_intervention: continue_with_degraded
+    failure_rollback:
+      action: cleanup
+      description: >-
+        删除本阶段契约副本；**不删除图形文件** —— 图形可能是人工或外部工具产出，误删代价高
+      targets: ["outputs/_workflow/S4/**"]
+      verify: "图形目录下的文件数量与运行前一致"
+
+  - id: S5_report
+    name: 报告生成
+    contract_in: FigureArtifact
+    contract_out: ReportBundle
+    adapter: figure_to_report
+    producer:
+      kinds: [skill, adapter]
+    requires: [S4_figure]
+    on_human_intervention: continue_with_degraded
+    failure_rollback:
+      action: cleanup
+      description: 删除本阶段生成的 Markdown 报告与契约副本（报告可随时由 S4 产物重建）
+      targets:
+        - "outputs/_workflow/S5/**"
+        - "outputs/reports/<contract_id>.md"
+      verify: "S4 契约仍存在且可校验通过"
+
+# ---------------------------------------------------------------------------
+# 人工介入触发点
+# ---------------------------------------------------------------------------
+# 这里列出的是**预期会经常发生**的断点。它们不是异常，是设计的一部分：
+# 技能库里大量技能无法无头执行，硬撑不如结构化地喊人。
+# ---------------------------------------------------------------------------
+human_intervention_points:
+
+  - id: H1
+    stage: S1_simulate
+    trigger: 上游为自然语言病例文本、无结构化表格
+    blocker_code: unsupported_transformation
+    human_must_supply: "CSV/TSV 表格（样本级一行，含列名与分组列）"
+
+  - id: H2
+    stage: S1_simulate
+    trigger: 列既无规范语义映射、也无 dtype/unit 声明
+    blocker_code: ambiguous_semantics
+    human_must_supply: "列映射 JSON {源列名: 规范列名}"
+    note: "缺一半（有语义无类型 / 有类型无语义）只记警告并放行，见 criteria.md"
+
+  - id: H3
+    stage: S3_analyze
+    trigger: 目标技能为纯提示词技能，或入口未文档化
+    blocker_code: prompt_only_skill / entry_not_documented
+    human_must_supply: "人工运行技能后的结果文件，或补全技能注册表的 entry 并标注 verified"
+
+  - id: H4
+    stage: S4_figure
+    trigger: >-
+      图型所需统计量在上游 AnalysisResult 中不存在
+      （典型：上游方法不产出置信区间，却要画森林图）
+    blocker_code: payload_schema_mismatch
+    human_must_supply: "含所需字段的结果表，或改跑能产出该统计量的方法"
+
+  - id: H5
+    stage: S5_report
+    trigger: 图注（legend）或统计说明（statistical_notes）为 TODO
+    blocker_code: unsupported_transformation
+    human_must_supply: "图注与统计说明文本（实现只写显式占位符，绝不编造结论）"

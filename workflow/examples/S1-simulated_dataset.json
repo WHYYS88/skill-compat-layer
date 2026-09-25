@@ -1,0 +1,714 @@
+{
+  "id": "S1-sim-contract-fc3227fa",
+  "source_skill": "integration.simulate.generator",
+  "source_skill_path": null,
+  "stage": "S1_simulate",
+  "format": [
+    "csv",
+    "json"
+  ],
+  "schema_version": "1.0.0",
+  "payload": {
+    "design": {
+      "n_samples": 60,
+      "n_features": 0,
+      "groups": {
+        "case": 30,
+        "control": 30
+      },
+      "seed": 20260924,
+      "missing_rate": 0.05,
+      "notes": "模拟数据，非真实患者"
+    },
+    "tables": {
+      "clinical": {
+        "columns": [
+          {
+            "name": "sample_id",
+            "dtype": "str",
+            "unit": "TODO",
+            "description": "TODO",
+            "missing_count": null,
+            "unique_count": null
+          },
+          {
+            "name": "group",
+            "dtype": "category",
+            "unit": "TODO",
+            "description": "TODO",
+            "missing_count": null,
+            "unique_count": null
+          },
+          {
+            "name": "age",
+            "dtype": "int",
+            "unit": "years",
+            "description": "TODO",
+            "missing_count": null,
+            "unique_count": null
+          },
+          {
+            "name": "sex",
+            "dtype": "category",
+            "unit": "TODO",
+            "description": "TODO",
+            "missing_count": null,
+            "unique_count": null
+          },
+          {
+            "name": "bmi",
+            "dtype": "TODO",
+            "unit": "kg/m2",
+            "description": "TODO",
+            "missing_count": null,
+            "unique_count": null
+          }
+        ],
+        "rows": [
+          {
+            "sample_id": "S001",
+            "group": "control",
+            "age": 59,
+            "sex": "F",
+            "bmi": 24.15
+          },
+          {
+            "sample_id": "S002",
+            "group": "case",
+            "age": 67,
+            "sex": "M",
+            "bmi": 25.821
+          },
+          {
+            "sample_id": "S003",
+            "group": "control",
+            "age": 65,
+            "sex": "M",
+            "bmi": 21.509
+          },
+          {
+            "sample_id": "S004",
+            "group": "control",
+            "age": 54,
+            "sex": "M",
+            "bmi": 20.33
+          },
+          {
+            "sample_id": "S005",
+            "group": "control",
+            "age": null,
+            "sex": "M",
+            "bmi": 29.25
+          },
+          {
+            "sample_id": "S006",
+            "group": "control",
+            "age": 56,
+            "sex": "F",
+            "bmi": 28.112
+          },
+          {
+            "sample_id": "S007",
+            "group": "case",
+            "age": 67,
+            "sex": "F",
+            "bmi": 30.493
+          },
+          {
+            "sample_id": "S008",
+            "group": "case",
+            "age": 65,
+            "sex": "F",
+            "bmi": 23.538
+          },
+          {
+            "sample_id": "S009",
+            "group": null,
+            "age": 65,
+            "sex": "F",
+            "bmi": 19.363
+          },
+          {
+            "sample_id": "S010",
+            "group": "control",
+            "age": 77,
+            "sex": "F",
+            "bmi": 18.562
+          },
+          {
+            "sample_id": "S011",
+            "group": "control",
+            "age": 64,
+            "sex": "M",
+            "bmi": 24.294
+          },
+          {
+            "sample_id": "S012",
+            "group": "control",
+            "age": 71,
+            "sex": "M",
+            "bmi": 25.152
+          },
+          {
+            "sample_id": "S013",
+            "group": "control",
+            "age": 54,
+            "sex": "M",
+            "bmi": 22.895
+          },
+          {
+            "sample_id": "S014",
+            "group": "control",
+            "age": 55,
+            "sex": "F",
+            "bmi": 28.29
+          },
+          {
+            "sample_id": "S015",
+            "group": "control",
+            "age": 63,
+            "sex": "F",
+            "bmi": 25.073
+          },
+          {
+            "sample_id": "S016",
+            "group": "control",
+            "age": null,
+            "sex": "F",
+            "bmi": 19.311
+          },
+          {
+            "sample_id": "S017",
+            "group": "case",
+            "age": 66,
+            "sex": "M",
+            "bmi": 31.421
+          },
+          {
+            "sample_id": "S018",
+            "group": "control",
+            "age": 49,
+            "sex": "M",
+            "bmi": 22.246
+          },
+          {
+            "sample_id": "S019",
+            "group": null,
+            "age": 58,
+            "sex": "M",
+            "bmi": null
+          },
+          {
+            "sample_id": "S020",
+            "group": "control",
+            "age": 51,
+            "sex": "M",
+            "bmi": null
+          },
+          {
+            "sample_id": "S021",
+            "group": "case",
+            "age": 66,
+            "sex": "F",
+            "bmi": 20.76
+          },
+          {
+            "sample_id": "S022",
+            "group": "control",
+            "age": 56,
+            "sex": "F",
+            "bmi": 23.713
+          },
+          {
+            "sample_id": "S023",
+            "group": "control",
+            "age": 70,
+            "sex": "F",
+            "bmi": 24.315
+          },
+          {
+            "sample_id": "S024",
+            "group": "case",
+            "age": 80,
+            "sex": "F",
+            "bmi": 25.106
+          },
+          {
+            "sample_id": "S025",
+            "group": "control",
+            "age": 55,
+            "sex": "F",
+            "bmi": 25.694
+          },
+          {
+            "sample_id": "S026",
+            "group": "case",
+            "age": 75,
+            "sex": "M",
+            "bmi": 29.596
+          },
+          {
+            "sample_id": "S027",
+            "group": "case",
+            "age": 65,
+            "sex": "M",
+            "bmi": 21.458
+          },
+          {
+            "sample_id": "S028",
+            "group": "control",
+            "age": 64,
+            "sex": "F",
+            "bmi": 22.323
+          },
+          {
+            "sample_id": "S029",
+            "group": "control",
+            "age": 56,
+            "sex": "F",
+            "bmi": 21.195
+          },
+          {
+            "sample_id": "S030",
+            "group": "control",
+            "age": 73,
+            "sex": "M",
+            "bmi": null
+          },
+          {
+            "sample_id": "S031",
+            "group": null,
+            "age": null,
+            "sex": "F",
+            "bmi": 35.407
+          },
+          {
+            "sample_id": "S032",
+            "group": "case",
+            "age": 61,
+            "sex": "F",
+            "bmi": 23.987
+          },
+          {
+            "sample_id": "S033",
+            "group": "control",
+            "age": 61,
+            "sex": "M",
+            "bmi": 25.45
+          },
+          {
+            "sample_id": "S034",
+            "group": "case",
+            "age": null,
+            "sex": "F",
+            "bmi": 20.549
+          },
+          {
+            "sample_id": "S035",
+            "group": null,
+            "age": null,
+            "sex": "F",
+            "bmi": 27.947
+          },
+          {
+            "sample_id": "S036",
+            "group": null,
+            "age": 67,
+            "sex": "M",
+            "bmi": 28.611
+          },
+          {
+            "sample_id": "S037",
+            "group": "control",
+            "age": 80,
+            "sex": null,
+            "bmi": 26.456
+          },
+          {
+            "sample_id": "S038",
+            "group": "case",
+            "age": 51,
+            "sex": "M",
+            "bmi": 23.467
+          },
+          {
+            "sample_id": "S039",
+            "group": "control",
+            "age": 56,
+            "sex": "M",
+            "bmi": 27.628
+          },
+          {
+            "sample_id": "S040",
+            "group": "control",
+            "age": 65,
+            "sex": "F",
+            "bmi": 23.184
+          },
+          {
+            "sample_id": "S041",
+            "group": "control",
+            "age": 50,
+            "sex": "F",
+            "bmi": 24.603
+          },
+          {
+            "sample_id": "S042",
+            "group": "case",
+            "age": 62,
+            "sex": "M",
+            "bmi": 22.867
+          },
+          {
+            "sample_id": "S043",
+            "group": "control",
+            "age": 77,
+            "sex": "F",
+            "bmi": 26.573
+          },
+          {
+            "sample_id": "S044",
+            "group": "case",
+            "age": 74,
+            "sex": "F",
+            "bmi": 30.195
+          },
+          {
+            "sample_id": "S045",
+            "group": "case",
+            "age": 59,
+            "sex": "M",
+            "bmi": 21.895
+          },
+          {
+            "sample_id": "S046",
+            "group": "case",
+            "age": 68,
+            "sex": "F",
+            "bmi": 25.682
+          },
+          {
+            "sample_id": "S047",
+            "group": "case",
+            "age": null,
+            "sex": "F",
+            "bmi": 30.381
+          },
+          {
+            "sample_id": "S048",
+            "group": "control",
+            "age": 52,
+            "sex": "M",
+            "bmi": 28.24
+          },
+          {
+            "sample_id": "S049",
+            "group": "control",
+            "age": 49,
+            "sex": "M",
+            "bmi": 21.603
+          },
+          {
+            "sample_id": "S050",
+            "group": "control",
+            "age": 63,
+            "sex": "M",
+            "bmi": 21.685
+          },
+          {
+            "sample_id": "S051",
+            "group": "control",
+            "age": 67,
+            "sex": "F",
+            "bmi": 25.825
+          },
+          {
+            "sample_id": "S052",
+            "group": "case",
+            "age": 71,
+            "sex": "F",
+            "bmi": 24.573
+          },
+          {
+            "sample_id": "S053",
+            "group": null,
+            "age": 50,
+            "sex": "F",
+            "bmi": 23.346
+          },
+          {
+            "sample_id": "S054",
+            "group": "control",
+            "age": 55,
+            "sex": "F",
+            "bmi": 27.2
+          },
+          {
+            "sample_id": "S055",
+            "group": "control",
+            "age": 46,
+            "sex": "M",
+            "bmi": 24.771
+          },
+          {
+            "sample_id": "S056",
+            "group": "control",
+            "age": 55,
+            "sex": "F",
+            "bmi": 23.771
+          },
+          {
+            "sample_id": "S057",
+            "group": "control",
+            "age": null,
+            "sex": "F",
+            "bmi": 25.742
+          },
+          {
+            "sample_id": "S058",
+            "group": "control",
+            "age": 59,
+            "sex": "M",
+            "bmi": 21.411
+          },
+          {
+            "sample_id": "S059",
+            "group": "control",
+            "age": 56,
+            "sex": "F",
+            "bmi": 27.188
+          },
+          {
+            "sample_id": "S060",
+            "group": "case",
+            "age": 61,
+            "sex": "M",
+            "bmi": 20.701
+          }
+        ],
+        "n_rows": 60,
+        "index_name": "TODO",
+        "artifact": null
+      },
+      "metrics": {
+        "columns": [
+          {
+            "name": "name",
+            "dtype": "str",
+            "unit": "TODO",
+            "description": "TODO",
+            "missing_count": null,
+            "unique_count": null
+          },
+          {
+            "name": "value",
+            "dtype": "str",
+            "unit": "TODO",
+            "description": "TODO",
+            "missing_count": null,
+            "unique_count": null
+          },
+          {
+            "name": "ci_low",
+            "dtype": "str",
+            "unit": "TODO",
+            "description": "TODO",
+            "missing_count": null,
+            "unique_count": null
+          },
+          {
+            "name": "ci_high",
+            "dtype": "str",
+            "unit": "TODO",
+            "description": "TODO",
+            "missing_count": null,
+            "unique_count": null
+          },
+          {
+            "name": "p_value",
+            "dtype": "str",
+            "unit": "TODO",
+            "description": "TODO",
+            "missing_count": null,
+            "unique_count": null
+          },
+          {
+            "name": "n",
+            "dtype": "str",
+            "unit": "TODO",
+            "description": "TODO",
+            "missing_count": null,
+            "unique_count": null
+          },
+          {
+            "name": "unit",
+            "dtype": "str",
+            "unit": "TODO",
+            "description": "TODO",
+            "missing_count": null,
+            "unique_count": null
+          },
+          {
+            "name": "method",
+            "dtype": "str",
+            "unit": "TODO",
+            "description": "TODO",
+            "missing_count": null,
+            "unique_count": null
+          }
+        ],
+        "rows": [
+          {
+            "name": "auc(roc_auc)",
+            "value": 0.87,
+            "ci_low": 0.79,
+            "ci_high": 0.94,
+            "p_value": "",
+            "n": "",
+            "unit": "NA",
+            "method": "DeLong（模拟参数）"
+          },
+          {
+            "name": "sensitivity(tpr)",
+            "value": 0.81,
+            "ci_low": "",
+            "ci_high": "",
+            "p_value": "",
+            "n": "",
+            "unit": "NA",
+            "method": "Youden（模拟参数）"
+          },
+          {
+            "name": "specificity(tnr)",
+            "value": 0.79,
+            "ci_low": "",
+            "ci_high": "",
+            "p_value": "",
+            "n": "",
+            "unit": "NA",
+            "method": "Youden（模拟参数）"
+          }
+        ],
+        "n_rows": 3,
+        "index_name": "TODO",
+        "artifact": null
+      }
+    },
+    "documents": [],
+    "answer_key": {},
+    "is_synthetic": true,
+    "contains_real_patient_data": false
+  },
+  "metadata": {
+    "generator": "integration/simulate/generator.py",
+    "generator_version": "1.0.0",
+    "protocol_schema_version": "1.0.0",
+    "branch": "A",
+    "protocol_id": "demo-protocol-001",
+    "design_source": "TODO: 研究方案编号 / 来源",
+    "column_records": [
+      {
+        "table": "clinical",
+        "column": "sample_id",
+        "kind": "constant",
+        "how": "constant=None",
+        "declared": true,
+        "filled_with_null": 0
+      },
+      {
+        "table": "clinical",
+        "column": "group",
+        "kind": "categorical",
+        "how": "categorical({\"case\": 1, \"control\": 1})",
+        "declared": true,
+        "filled_with_null": 6
+      },
+      {
+        "table": "clinical",
+        "column": "age",
+        "kind": "normal",
+        "how": "normal(mean=62, sd=9)",
+        "declared": true,
+        "filled_with_null": 7
+      },
+      {
+        "table": "clinical",
+        "column": "sex",
+        "kind": "categorical",
+        "how": "categorical({\"M\": 1, \"F\": 1})",
+        "declared": true,
+        "filled_with_null": 1
+      },
+      {
+        "table": "clinical",
+        "column": "bmi",
+        "kind": "normal",
+        "how": "normal(mean=24.5, sd=3.2)",
+        "declared": true,
+        "filled_with_null": 3
+      },
+      {
+        "table": "metrics",
+        "column": "auc(roc_auc)",
+        "kind": "protocol_declared",
+        "how": "protocol-declared value=0.87 ci=[0.79,0.94]",
+        "declared": true,
+        "filled_with_null": 0
+      },
+      {
+        "table": "metrics",
+        "column": "sensitivity(tpr)",
+        "kind": "protocol_declared",
+        "how": "protocol-declared value=0.81 ci=[None,None]",
+        "declared": true,
+        "filled_with_null": 0
+      },
+      {
+        "table": "metrics",
+        "column": "specificity(tnr)",
+        "kind": "protocol_declared",
+        "how": "protocol-declared value=0.79 ci=[None,None]",
+        "declared": true,
+        "filled_with_null": 0
+      }
+    ],
+    "effect_sizes_declared": {
+      "risk_score": {
+        "case_mean": 1.2,
+        "control_mean": 0.2,
+        "sd": 0.6
+      }
+    },
+    "audit_note": "所有数值均由已声明协议 + 固定 seed 生成；未使用任何真实患者数据",
+    "validation": {
+      "checked_at": "1970-05-01T15:08:13+00:00",
+      "errors": [],
+      "warnings": [],
+      "ok": true
+    }
+  },
+  "provenance": [
+    {
+      "kind": "generator",
+      "ref": "integration.simulate.generator",
+      "skill_path": null,
+      "at": "1970-05-01T15:08:13Z",
+      "adapter": "integration.simulate.generator",
+      "inputs": [],
+      "params": {
+        "seed": 20260924,
+        "n_samples": 60,
+        "missing_rate": 0.05,
+        "tables": [
+          "clinical",
+          "metrics"
+        ]
+      },
+      "note": "S1：协议驱动模拟数据生成（确定性）"
+    }
+  ],
+  "human_interventions": [],
+  "created_at": "2026-09-25T05:02:35.292387Z",
+  "updated_at": null,
+  "notes": "模拟数据。生成方式逐列记录在 metadata.column_records，可逐列复核。"
+}

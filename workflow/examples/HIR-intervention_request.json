@@ -1,0 +1,24 @@
+{
+  "request_id": "HIR-plottinggateway-e0af4ad4",
+  "contract_id": "S3-analyze-s2-clean-s1-sim-28233fd4",
+  "stage": "S4_figure",
+  "adapter": "plotting.gateway",
+  "source_skill": "lasso-logistics-analysis",
+  "blocker": "图型 forest 需要统计量 estimate, ci_low, ci_high，但上游 AnalysisResult 中不存在（现有：auc, sensitivity, specificity）",
+  "blocker_code": "payload_schema_mismatch",
+  "required_format": "包含以下列的统计表（CSV）：estimate, ci_low, ci_high",
+  "required_fields": [
+    "estimate",
+    "ci_low",
+    "ci_high"
+  ],
+  "suggested_actions": [
+    "补跑能产出该统计量的技能",
+    "或人工提供含 estimate, ci_low, ci_high 列的结果表"
+  ],
+  "evidence": [
+    "metrics present: ['auc(roc_auc)', 'sensitivity(tpr)', 'specificity(tnr)']"
+  ],
+  "severity": "blocking",
+  "created_at": "2026-09-25T05:02:36.583694Z"
+}

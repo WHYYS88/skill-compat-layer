@@ -1,0 +1,79 @@
+{
+  "additionalProperties": false,
+  "description": "血缘链单步记录",
+  "properties": {
+    "kind": {
+      "enum": [
+        "skill",
+        "adapter",
+        "human",
+        "generator"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "ref": {
+      "description": "技能 ID 或适配器名（如 ai_to_ci.adapters.sim_to_clean）",
+      "title": "Ref",
+      "type": "string"
+    },
+    "skill_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "技能在仓库中的路径（若为技能）",
+      "title": "Skill Path"
+    },
+    "at": {
+      "format": "date-time",
+      "title": "At",
+      "type": "string"
+    },
+    "adapter": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Adapter"
+    },
+    "inputs": {
+      "description": "上游契约 id 列表",
+      "items": {
+        "type": "string"
+      },
+      "title": "Inputs",
+      "type": "array"
+    },
+    "params": {
+      "additionalProperties": true,
+      "title": "Params",
+      "type": "object"
+    },
+    "note": {
+      "default": "",
+      "title": "Note",
+      "type": "string"
+    }
+  },
+  "required": [
+    "kind",
+    "ref"
+  ],
+  "title": "ProvenanceStep",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://medical-research-skills.local/integration/provenance_step.schema.json",
+  "x-contract-version": "1.0.0",
+  "x-generated-by": "integration/data_contracts/build_schemas.py"
+}

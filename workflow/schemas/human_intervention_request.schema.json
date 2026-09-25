@@ -1,0 +1,129 @@
+{
+  "$defs": {
+    "HumanInterventionReason": {
+      "description": "人工介入的结构化原因（适配器必须用这些枚举，不允许自由文本代替）。",
+      "enum": [
+        "prompt_only_skill",
+        "entry_not_documented",
+        "format_undeclared",
+        "dependency_undeclared",
+        "payload_schema_mismatch",
+        "unsupported_transformation",
+        "ambiguous_semantics",
+        "data_quality_blocker",
+        "renderer_unavailable"
+      ],
+      "title": "HumanInterventionReason",
+      "type": "string"
+    },
+    "Stage": {
+      "description": "五阶段流水线（与 docs/skill_inventory.md 的代号一致）。",
+      "enum": [
+        "S1_simulate",
+        "S2_process",
+        "S3_analyze",
+        "S4_figure",
+        "S5_report"
+      ],
+      "title": "Stage",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "结构化人工介入请求（适配器断点必须抛出的对象）",
+  "properties": {
+    "request_id": {
+      "title": "Request Id",
+      "type": "string"
+    },
+    "contract_id": {
+      "default": "TODO",
+      "description": "涉及的契约 id；未知为 TODO",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "stage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Stage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "adapter": {
+      "description": "发起请求的适配器模块名",
+      "title": "Adapter",
+      "type": "string"
+    },
+    "source_skill": {
+      "default": "TODO",
+      "title": "Source Skill",
+      "type": "string"
+    },
+    "blocker": {
+      "description": "当前卡点（现象）",
+      "title": "Blocker",
+      "type": "string"
+    },
+    "blocker_code": {
+      "$ref": "#/$defs/HumanInterventionReason"
+    },
+    "required_format": {
+      "description": "需要人类提供的具体数据格式（或需要确认的字段）",
+      "title": "Required Format",
+      "type": "string"
+    },
+    "required_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Fields",
+      "type": "array"
+    },
+    "suggested_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Suggested Actions",
+      "type": "array"
+    },
+    "evidence": {
+      "description": "可复现的证据（文件路径/命令）",
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "severity": {
+      "default": "blocking",
+      "enum": [
+        "blocking",
+        "degraded"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "adapter",
+    "blocker",
+    "blocker_code",
+    "required_format"
+  ],
+  "title": "HumanInterventionRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://medical-research-skills.local/integration/human_intervention_request.schema.json",
+  "x-contract-version": "1.0.0",
+  "x-generated-by": "integration/data_contracts/build_schemas.py"
+}

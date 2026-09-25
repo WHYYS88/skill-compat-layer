@@ -1,0 +1,403 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "description": "文件制品引用。**不内嵌大文件**，只引用工作区内的相对路径。",
+      "properties": {
+        "path": {
+          "description": "工作区相对路径（POSIX 分隔符）",
+          "title": "Path",
+          "type": "string"
+        },
+        "format": {
+          "default": "unknown",
+          "title": "Format",
+          "type": "string"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Bytes"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        },
+        "exists": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "写入/校验时探明的存在性",
+          "title": "Exists"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "CleanDatasetPayload": {
+      "additionalProperties": false,
+      "description": "S2 载荷：清洗/规范化后的数据集。",
+      "properties": {
+        "tables": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TablePayload"
+          },
+          "title": "Tables",
+          "type": "object"
+        },
+        "features": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Features",
+          "type": "object"
+        },
+        "group_labels": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "sample_id -> group",
+          "title": "Group Labels",
+          "type": "object"
+        },
+        "normalization": {
+          "default": "TODO",
+          "description": "log2 / zscore / minmax / combat / TODO",
+          "title": "Normalization",
+          "type": "string"
+        },
+        "batch_corrected": {
+          "default": false,
+          "title": "Batch Corrected",
+          "type": "boolean"
+        },
+        "dropped_columns": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dropped Columns",
+          "type": "array"
+        },
+        "imputation": {
+          "default": "TODO",
+          "title": "Imputation",
+          "type": "string"
+        }
+      },
+      "title": "CleanDatasetPayload",
+      "type": "object"
+    },
+    "ColumnSpec": {
+      "additionalProperties": false,
+      "description": "列级规格。name 必填；dtype/unit/description 未声明时保持 TODO。",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "dtype": {
+          "default": "TODO",
+          "description": "int/float/str/category/datetime 或 TODO",
+          "title": "Dtype",
+          "type": "string"
+        },
+        "unit": {
+          "default": "TODO",
+          "description": "计量单位（如 mg/dL），未声明为 TODO",
+          "title": "Unit",
+          "type": "string"
+        },
+        "description": {
+          "default": "TODO",
+          "title": "Description",
+          "type": "string"
+        },
+        "missing_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Missing Count"
+        },
+        "unique_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unique Count"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ColumnSpec",
+      "type": "object"
+    },
+    "ProvenanceStep": {
+      "additionalProperties": false,
+      "description": "血缘链上的一步：哪个技能 / 适配器，什么时候，用什么参数产出了它。",
+      "properties": {
+        "kind": {
+          "enum": [
+            "skill",
+            "adapter",
+            "human",
+            "generator"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "ref": {
+          "description": "技能 ID 或适配器名（如 ai_to_ci.adapters.sim_to_clean）",
+          "title": "Ref",
+          "type": "string"
+        },
+        "skill_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "技能在仓库中的路径（若为技能）",
+          "title": "Skill Path"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "adapter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adapter"
+        },
+        "inputs": {
+          "description": "上游契约 id 列表",
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "ref"
+      ],
+      "title": "ProvenanceStep",
+      "type": "object"
+    },
+    "TablePayload": {
+      "additionalProperties": false,
+      "description": "表格数据载荷。行数据内联，规模大时改用 ArtifactRef。",
+      "properties": {
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/ColumnSpec"
+          },
+          "title": "Columns",
+          "type": "array"
+        },
+        "rows": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Rows",
+          "type": "array"
+        },
+        "n_rows": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "N Rows"
+        },
+        "index_name": {
+          "default": "TODO",
+          "title": "Index Name",
+          "type": "string"
+        },
+        "artifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "表格落盘引用（可选）"
+        }
+      },
+      "title": "TablePayload",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "S2 数据处理阶段的统一载荷契约",
+  "properties": {
+    "id": {
+      "description": "契约唯一 id，格式 stage-slug-hex",
+      "title": "Id",
+      "type": "string"
+    },
+    "source_skill": {
+      "description": "产出该载荷的技能 ID；非技能产出时用 generator:NAME / human:NAME",
+      "title": "Source Skill",
+      "type": "string"
+    },
+    "source_skill_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "技能在仓库中的相对路径（若适用）",
+      "title": "Source Skill Path"
+    },
+    "stage": {
+      "const": "S2_process",
+      "default": "S2_process",
+      "title": "Stage",
+      "type": "string"
+    },
+    "format": {
+      "description": "实际涉及的格式族（如 ['csv','pdf']）",
+      "items": {
+        "type": "string"
+      },
+      "title": "Format",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "payload": {
+      "$ref": "#/$defs/CleanDatasetPayload"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "provenance": {
+      "items": {
+        "$ref": "#/$defs/ProvenanceStep"
+      },
+      "title": "Provenance",
+      "type": "array"
+    },
+    "human_interventions": {
+      "description": "关联的 HumanInterventionRequest id",
+      "items": {
+        "type": "string"
+      },
+      "title": "Human Interventions",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    },
+    "notes": {
+      "default": "",
+      "title": "Notes",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "source_skill"
+  ],
+  "title": "CleanDataset",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://medical-research-skills.local/integration/clean_dataset.schema.json",
+  "x-contract-version": "1.0.0",
+  "x-generated-by": "integration/data_contracts/build_schemas.py"
+}

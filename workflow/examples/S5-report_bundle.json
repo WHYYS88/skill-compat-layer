@@ -1,0 +1,102 @@
+{
+  "id": "S5-report-s4-figure-s3-ana-b7d45ea2",
+  "source_skill": "integration.plotting.gateway",
+  "source_skill_path": null,
+  "stage": "S5_report",
+  "format": [
+    "md",
+    "json"
+  ],
+  "schema_version": "1.0.0",
+  "payload": {
+    "title": "TODO",
+    "sections": [
+      {
+        "heading": "摘要",
+        "body": "<!-- TODO: 摘要 正文（由 S5 报告技能或人工提供） from human -->",
+        "figure_ids": [],
+        "table_ids": [],
+        "order": 1
+      },
+      {
+        "heading": "方法",
+        "body": "<!-- TODO: 方法 正文（由 S5 报告技能或人工提供） from human -->",
+        "figure_ids": [],
+        "table_ids": [],
+        "order": 2
+      },
+      {
+        "heading": "结果",
+        "body": "<!-- TODO: 结果 正文（由 S5 报告技能或人工提供） from human -->",
+        "figure_ids": [],
+        "table_ids": [],
+        "order": 3
+      },
+      {
+        "heading": "图",
+        "body": "### 图 1. 图 roc\n\n![图 roc](outputs/figures/roc_28233fd4.png)\n\n*图注*：roc（integration 本地 renderer 生成）\n\n- 图型：roc\n- 来源分析：S3-analyze-s2-clean-s1-sim-28233fd4\n- 统计说明：AUC=0.8700，95%CI 0.7900-0.9400；工作点：灵敏度=0.8100，特异度=0.7900；未提供完整 ROC 点列，只标注该工作点，未绘制伪造曲线\n- 图形文件：outputs/figures/roc_28233fd4.png\n",
+        "figure_ids": [
+          "S4-figure-s3-analyze-s2-cl-a5612444"
+        ],
+        "table_ids": [],
+        "order": 4
+      },
+      {
+        "heading": "讨论",
+        "body": "<!-- TODO: 讨论 正文（由 S5 报告技能或人工提供） from human -->",
+        "figure_ids": [],
+        "table_ids": [],
+        "order": 5
+      }
+    ],
+    "figures": [
+      "S4-figure-s3-analyze-s2-cl-a5612444"
+    ],
+    "tables": [],
+    "markdown_path": "outputs/reports/S5-report-s4-figure-s3-ana-b7d45ea2.md",
+    "docx_path": null,
+    "citations": [],
+    "reporting_guideline": "STROBE"
+  },
+  "metadata": {
+    "adapter": "adapters.figure_to_report",
+    "template": "imrad",
+    "figure_contracts": [
+      "S4-figure-s3-analyze-s2-cl-a5612444"
+    ],
+    "missing_fields": [],
+    "markdown_written": false,
+    "schema_checks": {
+      "inputs": [
+        "FigureArtifact[S4-figure-s3-analyze-s2-cl-a5612444] errors=0 warnings=0 ok=True"
+      ]
+    },
+    "validation": {
+      "checked_at": "1970-12-01T15:18:23+00:00",
+      "errors": [],
+      "warnings": [],
+      "ok": true
+    }
+  },
+  "provenance": [
+    {
+      "kind": "adapter",
+      "ref": "adapters.figure_to_report",
+      "skill_path": null,
+      "at": "1970-12-01T15:18:23Z",
+      "adapter": "adapters.figure_to_report",
+      "inputs": [
+        "S4-figure-s3-analyze-s2-cl-a5612444"
+      ],
+      "params": {
+        "template": "imrad",
+        "title": "TODO"
+      },
+      "note": "S4 -> S5：图形与图注嵌入报告（结构化片段）"
+    }
+  ],
+  "human_interventions": [],
+  "created_at": "2026-09-25T05:02:35.964474Z",
+  "updated_at": null,
+  "notes": "正文段落仅为占位符；本适配器不生成学术结论。"
+}

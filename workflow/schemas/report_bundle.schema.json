@@ -1,0 +1,293 @@
+{
+  "$defs": {
+    "ProvenanceStep": {
+      "additionalProperties": false,
+      "description": "血缘链上的一步：哪个技能 / 适配器，什么时候，用什么参数产出了它。",
+      "properties": {
+        "kind": {
+          "enum": [
+            "skill",
+            "adapter",
+            "human",
+            "generator"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "ref": {
+          "description": "技能 ID 或适配器名（如 ai_to_ci.adapters.sim_to_clean）",
+          "title": "Ref",
+          "type": "string"
+        },
+        "skill_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "技能在仓库中的路径（若为技能）",
+          "title": "Skill Path"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "adapter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adapter"
+        },
+        "inputs": {
+          "description": "上游契约 id 列表",
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "ref"
+      ],
+      "title": "ProvenanceStep",
+      "type": "object"
+    },
+    "ReportBundlePayload": {
+      "additionalProperties": false,
+      "description": "S5 载荷：报告包。",
+      "properties": {
+        "title": {
+          "default": "TODO",
+          "title": "Title",
+          "type": "string"
+        },
+        "sections": {
+          "items": {
+            "$ref": "#/$defs/ReportSection"
+          },
+          "title": "Sections",
+          "type": "array"
+        },
+        "figures": {
+          "description": "FigureArtifact 契约 id 列表",
+          "items": {
+            "type": "string"
+          },
+          "title": "Figures",
+          "type": "array"
+        },
+        "tables": {
+          "description": "AnalysisResult 契约 id 列表",
+          "items": {
+            "type": "string"
+          },
+          "title": "Tables",
+          "type": "array"
+        },
+        "markdown_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markdown Path"
+        },
+        "docx_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Docx Path"
+        },
+        "citations": {
+          "description": "引用文献（不得编造）",
+          "items": {
+            "type": "string"
+          },
+          "title": "Citations",
+          "type": "array"
+        },
+        "reporting_guideline": {
+          "default": "TODO",
+          "description": "CONSORT/STROBE/PRISMA/TRIPOD/... 未声明为 TODO",
+          "title": "Reporting Guideline",
+          "type": "string"
+        }
+      },
+      "title": "ReportBundlePayload",
+      "type": "object"
+    },
+    "ReportSection": {
+      "additionalProperties": false,
+      "properties": {
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        },
+        "body": {
+          "default": "",
+          "title": "Body",
+          "type": "string"
+        },
+        "figure_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Figure Ids",
+          "type": "array"
+        },
+        "table_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Table Ids",
+          "type": "array"
+        },
+        "order": {
+          "default": 0,
+          "title": "Order",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "heading"
+      ],
+      "title": "ReportSection",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "S5 报告生成阶段的统一载荷契约",
+  "properties": {
+    "id": {
+      "description": "契约唯一 id，格式 stage-slug-hex",
+      "title": "Id",
+      "type": "string"
+    },
+    "source_skill": {
+      "description": "产出该载荷的技能 ID；非技能产出时用 generator:NAME / human:NAME",
+      "title": "Source Skill",
+      "type": "string"
+    },
+    "source_skill_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "技能在仓库中的相对路径（若适用）",
+      "title": "Source Skill Path"
+    },
+    "stage": {
+      "const": "S5_report",
+      "default": "S5_report",
+      "title": "Stage",
+      "type": "string"
+    },
+    "format": {
+      "description": "实际涉及的格式族（如 ['csv','pdf']）",
+      "items": {
+        "type": "string"
+      },
+      "title": "Format",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "payload": {
+      "$ref": "#/$defs/ReportBundlePayload"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "provenance": {
+      "items": {
+        "$ref": "#/$defs/ProvenanceStep"
+      },
+      "title": "Provenance",
+      "type": "array"
+    },
+    "human_interventions": {
+      "description": "关联的 HumanInterventionRequest id",
+      "items": {
+        "type": "string"
+      },
+      "title": "Human Interventions",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    },
+    "notes": {
+      "default": "",
+      "title": "Notes",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "source_skill"
+  ],
+  "title": "ReportBundle",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://medical-research-skills.local/integration/report_bundle.schema.json",
+  "x-contract-version": "1.0.0",
+  "x-generated-by": "integration/data_contracts/build_schemas.py"
+}

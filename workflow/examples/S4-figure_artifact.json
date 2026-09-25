@@ -1,0 +1,167 @@
+{
+  "id": "S4-figure-s3-analyze-s2-cl-a5612444",
+  "source_skill": "integration.plotting.gateway",
+  "source_skill_path": "awesome-med-research-skills/Data Analysis/lasso-logistics-analysis/SKILL.md",
+  "stage": "S4_figure",
+  "format": [
+    "json",
+    "png"
+  ],
+  "schema_version": "1.0.0",
+  "payload": {
+    "image_path": "outputs/figures/roc_28233fd4.png",
+    "legend": "roc（integration 本地 renderer 生成）",
+    "caption": "图 roc",
+    "statistical_notes": "AUC=0.8700，95%CI 0.7900-0.9400；工作点：灵敏度=0.8100，特异度=0.7900；未提供完整 ROC 点列，只标注该工作点，未绘制伪造曲线",
+    "source_analysis_id": "S3-analyze-s2-clean-s1-sim-28233fd4",
+    "figure_type": "roc",
+    "panel_labels": [],
+    "dpi": 300,
+    "width_in": 4.8,
+    "height_in": 4.6
+  },
+  "metadata": {
+    "adapter": "adapters.render_to_figure",
+    "input_contract": "S3-analyze-s2-clean-s1-sim-28233fd4",
+    "renderer_used": "integration",
+    "auto_fallback": null,
+    "auto_assembled_native_runner": false,
+    "native_backend": {
+      "skill_id": null,
+      "entry": null,
+      "requires": [],
+      "quality": "none"
+    },
+    "native_available": false,
+    "native_missing": [
+      "无原生后端注册"
+    ],
+    "renderer_meta": {
+      "figure_type": "roc",
+      "renderer": "RocRenderer",
+      "renderer_version": "1.0.0",
+      "image_path": "outputs/figures/roc_28233fd4.png",
+      "format": "png",
+      "dpi": 300,
+      "width_in": 4.8,
+      "height_in": 4.6,
+      "size_bytes": 79741,
+      "sha256": "e95a6aad9756d84b02ea9a39b0985a4ff275715086a3cfb9d48e5ebff8cd4136",
+      "source_analysis_id": "S3-analyze-s2-clean-s1-sim-28233fd4",
+      "statistical_notes": "AUC=0.8700，95%CI 0.7900-0.9400；工作点：灵敏度=0.8100，特异度=0.7900；未提供完整 ROC 点列，只标注该工作点，未绘制伪造曲线",
+      "metrics_used": [
+        "auc(roc_auc)",
+        "sensitivity(tpr)",
+        "specificity(tnr)"
+      ],
+      "generated_by": "integration/plotting/gateway.py (fallback renderer)",
+      "cjk_font": "Microsoft YaHei",
+      "caption": "图 roc",
+      "legend": "roc（integration 本地 renderer 生成）"
+    },
+    "schema_checks": {
+      "input": "AnalysisResult[S3-analyze-s2-clean-s1-sim-28233fd4] errors=0 warnings=0 ok=True"
+    },
+    "validation": {
+      "checked_at": "1970-04-16T10:19:31+00:00",
+      "errors": [],
+      "warnings": [],
+      "ok": true
+    }
+  },
+  "provenance": [
+    {
+      "kind": "generator",
+      "ref": "integration.simulate.generator",
+      "skill_path": null,
+      "at": "1970-05-01T15:08:13Z",
+      "adapter": "integration.simulate.generator",
+      "inputs": [],
+      "params": {
+        "seed": 20260924,
+        "n_samples": 60,
+        "missing_rate": 0.05,
+        "tables": [
+          "clinical",
+          "metrics"
+        ]
+      },
+      "note": "S1：协议驱动模拟数据生成（确定性）"
+    },
+    {
+      "kind": "adapter",
+      "ref": "adapters.sim_to_clean",
+      "skill_path": null,
+      "at": "1970-04-19T01:29:59Z",
+      "adapter": "adapters.sim_to_clean",
+      "inputs": [
+        "S1-sim-contract-fc3227fa"
+      ],
+      "params": {
+        "table": "clinical",
+        "strict": true,
+        "column_map": {
+          "sample_id": "sample_id",
+          "group": "group",
+          "age": "age",
+          "sex": "sex",
+          "bmi": "bmi"
+        },
+        "column_status": {
+          "sample_id": "pass",
+          "group": "pass",
+          "age": "pass",
+          "sex": "pass",
+          "bmi": "pass",
+          "name": "warn_no_semantics",
+          "value": "warn_no_semantics",
+          "ci_low": "warn_no_semantics",
+          "ci_high": "warn_no_semantics",
+          "p_value": "warn_no_semantics",
+          "n": "warn_no_semantics",
+          "unit": "warn_no_semantics",
+          "method": "warn_no_semantics"
+        },
+        "warnings": []
+      },
+      "note": "S1 -> S2 结构化转换（未做任何数值变换）"
+    },
+    {
+      "kind": "adapter",
+      "ref": "adapters.clean_to_analysis",
+      "skill_path": "awesome-med-research-skills/Data Analysis/lasso-logistics-analysis/SKILL.md",
+      "at": "1970-04-18T07:40:48Z",
+      "adapter": "adapters.clean_to_analysis",
+      "inputs": [
+        "S2-clean-s1-sim-contract-773528d8"
+      ],
+      "params": {
+        "skill": "lasso-logistics-analysis",
+        "run": false,
+        "timeout": 600
+      },
+      "note": "S2 -> S3：执行技能或映射人工结果"
+    },
+    {
+      "kind": "adapter",
+      "ref": "adapters.render_to_figure",
+      "skill_path": null,
+      "at": "1970-04-16T10:19:31Z",
+      "adapter": "adapters.render_to_figure",
+      "inputs": [
+        "S3-analyze-s2-clean-s1-sim-28233fd4"
+      ],
+      "params": {
+        "figure_type": "roc",
+        "renderer": "integration",
+        "format": "png",
+        "require_verified": true
+      },
+      "note": "S3 -> S4：本地兜底 renderer 出图（原生不可用时）"
+    }
+  ],
+  "human_interventions": [],
+  "created_at": "2026-09-25T05:02:35.951474Z",
+  "updated_at": null,
+  "notes": "图形由 integration/plotting/gateway.py 生成；统计说明由 renderer 依据真实数值生成，未做学术推断。"
+}

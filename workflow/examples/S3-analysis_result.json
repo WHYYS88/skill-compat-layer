@@ -1,0 +1,162 @@
+{
+  "id": "S3-analyze-s2-clean-s1-sim-28233fd4",
+  "source_skill": "lasso-logistics-analysis",
+  "source_skill_path": "awesome-med-research-skills/Data Analysis/lasso-logistics-analysis/SKILL.md",
+  "stage": "S3_analyze",
+  "format": [
+    "csv",
+    "json",
+    "pdf",
+    "txt"
+  ],
+  "schema_version": "1.0.0",
+  "payload": {
+    "method": "expression_matrix,selected_features",
+    "metrics": [
+      {
+        "name": "auc(roc_auc)",
+        "value": 0.87,
+        "ci_low": 0.79,
+        "ci_high": 0.94,
+        "p_value": null,
+        "n": null,
+        "unit": "NA",
+        "method": "DeLong（模拟参数）"
+      },
+      {
+        "name": "sensitivity(tpr)",
+        "value": 0.81,
+        "ci_low": null,
+        "ci_high": null,
+        "p_value": null,
+        "n": null,
+        "unit": "NA",
+        "method": "Youden（模拟参数）"
+      },
+      {
+        "name": "specificity(tnr)",
+        "value": 0.79,
+        "ci_low": null,
+        "ci_high": null,
+        "p_value": null,
+        "n": null,
+        "unit": "NA",
+        "method": "Youden（模拟参数）"
+      }
+    ],
+    "result_tables": {},
+    "model_kind": "TODO",
+    "n_features": null,
+    "artifacts": [],
+    "warnings": []
+  },
+  "metadata": {
+    "adapter": "adapters.clean_to_analysis",
+    "input_contract": "S2-clean-s1-sim-contract-773528d8",
+    "skill_stage": "S3_analyze",
+    "skill_stage_confidence": "high",
+    "skill_entry": "Rscript scripts/main.R",
+    "skill_verified": false,
+    "execution": {
+      "skill_id": "lasso-logistics-analysis",
+      "entry": "Rscript scripts/main.R",
+      "command": "Rscript scripts/main.R",
+      "ran": false,
+      "skipped_reason": null,
+      "inputs_written": [
+        "outputs\\lasso-logistics-analysis\\S2-clean-s1-sim-contract-773528d8\\inputs\\clinical.csv",
+        "outputs\\lasso-logistics-analysis\\S2-clean-s1-sim-contract-773528d8\\inputs\\metrics.csv",
+        "outputs\\lasso-logistics-analysis\\S2-clean-s1-sim-contract-773528d8\\inputs\\groups.csv"
+      ],
+      "workdir": "outputs\\lasso-logistics-analysis\\S2-clean-s1-sim-contract-773528d8",
+      "verified": false
+    },
+    "schema_checks": {
+      "input": "CleanDataset[S2-clean-s1-sim-contract-773528d8] errors=0 warnings=1 ok=True"
+    },
+    "validation": {
+      "checked_at": "1970-04-18T07:40:48+00:00",
+      "errors": [],
+      "warnings": [],
+      "ok": true
+    }
+  },
+  "provenance": [
+    {
+      "kind": "generator",
+      "ref": "integration.simulate.generator",
+      "skill_path": null,
+      "at": "1970-05-01T15:08:13Z",
+      "adapter": "integration.simulate.generator",
+      "inputs": [],
+      "params": {
+        "seed": 20260924,
+        "n_samples": 60,
+        "missing_rate": 0.05,
+        "tables": [
+          "clinical",
+          "metrics"
+        ]
+      },
+      "note": "S1：协议驱动模拟数据生成（确定性）"
+    },
+    {
+      "kind": "adapter",
+      "ref": "adapters.sim_to_clean",
+      "skill_path": null,
+      "at": "1970-04-19T01:29:59Z",
+      "adapter": "adapters.sim_to_clean",
+      "inputs": [
+        "S1-sim-contract-fc3227fa"
+      ],
+      "params": {
+        "table": "clinical",
+        "strict": true,
+        "column_map": {
+          "sample_id": "sample_id",
+          "group": "group",
+          "age": "age",
+          "sex": "sex",
+          "bmi": "bmi"
+        },
+        "column_status": {
+          "sample_id": "pass",
+          "group": "pass",
+          "age": "pass",
+          "sex": "pass",
+          "bmi": "pass",
+          "name": "warn_no_semantics",
+          "value": "warn_no_semantics",
+          "ci_low": "warn_no_semantics",
+          "ci_high": "warn_no_semantics",
+          "p_value": "warn_no_semantics",
+          "n": "warn_no_semantics",
+          "unit": "warn_no_semantics",
+          "method": "warn_no_semantics"
+        },
+        "warnings": []
+      },
+      "note": "S1 -> S2 结构化转换（未做任何数值变换）"
+    },
+    {
+      "kind": "adapter",
+      "ref": "adapters.clean_to_analysis",
+      "skill_path": "awesome-med-research-skills/Data Analysis/lasso-logistics-analysis/SKILL.md",
+      "at": "1970-04-18T07:40:48Z",
+      "adapter": "adapters.clean_to_analysis",
+      "inputs": [
+        "S2-clean-s1-sim-contract-773528d8"
+      ],
+      "params": {
+        "skill": "lasso-logistics-analysis",
+        "run": false,
+        "timeout": 600
+      },
+      "note": "S2 -> S3：执行技能或映射人工结果"
+    }
+  ],
+  "human_interventions": [],
+  "created_at": "2026-09-25T05:02:35.360639Z",
+  "updated_at": null,
+  "notes": "metrics 仅由**确定命名的列**识别得到；识别不到即不产出指标（不臆造统计量）。"
+}

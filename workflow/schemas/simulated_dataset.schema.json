@@ -1,0 +1,540 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "description": "文件制品引用。**不内嵌大文件**，只引用工作区内的相对路径。",
+      "properties": {
+        "path": {
+          "description": "工作区相对路径（POSIX 分隔符）",
+          "title": "Path",
+          "type": "string"
+        },
+        "format": {
+          "default": "unknown",
+          "title": "Format",
+          "type": "string"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Bytes"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        },
+        "exists": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "写入/校验时探明的存在性",
+          "title": "Exists"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "ColumnSpec": {
+      "additionalProperties": false,
+      "description": "列级规格。name 必填；dtype/unit/description 未声明时保持 TODO。",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "dtype": {
+          "default": "TODO",
+          "description": "int/float/str/category/datetime 或 TODO",
+          "title": "Dtype",
+          "type": "string"
+        },
+        "unit": {
+          "default": "TODO",
+          "description": "计量单位（如 mg/dL），未声明为 TODO",
+          "title": "Unit",
+          "type": "string"
+        },
+        "description": {
+          "default": "TODO",
+          "title": "Description",
+          "type": "string"
+        },
+        "missing_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Missing Count"
+        },
+        "unique_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unique Count"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ColumnSpec",
+      "type": "object"
+    },
+    "DatasetDesign": {
+      "additionalProperties": false,
+      "description": "被模拟/被分析数据集的设计参数（用于可复现声明）。",
+      "properties": {
+        "n_samples": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "N Samples"
+        },
+        "n_features": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "N Features"
+        },
+        "groups": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Groups",
+          "type": "object"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "随机种子；必须写入才算可复现",
+          "title": "Seed"
+        },
+        "missing_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Missing Rate"
+        },
+        "notes": {
+          "default": "TODO",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "title": "DatasetDesign",
+      "type": "object"
+    },
+    "DocPayload": {
+      "additionalProperties": false,
+      "description": "文本/文档载荷（病例文本、方法学段落等）。",
+      "properties": {
+        "text": {
+          "default": "",
+          "title": "Text",
+          "type": "string"
+        },
+        "title": {
+          "default": "TODO",
+          "title": "Title",
+          "type": "string"
+        },
+        "language": {
+          "default": "TODO",
+          "description": "zh/en/... 未声明为 TODO",
+          "title": "Language",
+          "type": "string"
+        },
+        "sections": {
+          "items": {
+            "$ref": "#/$defs/ReportSection"
+          },
+          "title": "Sections",
+          "type": "array"
+        },
+        "artifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "DocPayload",
+      "type": "object"
+    },
+    "ProvenanceStep": {
+      "additionalProperties": false,
+      "description": "血缘链上的一步：哪个技能 / 适配器，什么时候，用什么参数产出了它。",
+      "properties": {
+        "kind": {
+          "enum": [
+            "skill",
+            "adapter",
+            "human",
+            "generator"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "ref": {
+          "description": "技能 ID 或适配器名（如 ai_to_ci.adapters.sim_to_clean）",
+          "title": "Ref",
+          "type": "string"
+        },
+        "skill_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "技能在仓库中的路径（若为技能）",
+          "title": "Skill Path"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "adapter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adapter"
+        },
+        "inputs": {
+          "description": "上游契约 id 列表",
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "ref"
+      ],
+      "title": "ProvenanceStep",
+      "type": "object"
+    },
+    "ReportSection": {
+      "additionalProperties": false,
+      "properties": {
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        },
+        "body": {
+          "default": "",
+          "title": "Body",
+          "type": "string"
+        },
+        "figure_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Figure Ids",
+          "type": "array"
+        },
+        "table_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Table Ids",
+          "type": "array"
+        },
+        "order": {
+          "default": 0,
+          "title": "Order",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "heading"
+      ],
+      "title": "ReportSection",
+      "type": "object"
+    },
+    "SimulatedDatasetPayload": {
+      "additionalProperties": false,
+      "description": "S1 载荷：模拟数据。\n\n重要（对应审计结论 G1）：仓库内**没有**产出模拟数据集的技能，\n因此本载荷的典型生产者是 integration 自带生成器或人工投递的文件。",
+      "properties": {
+        "design": {
+          "$ref": "#/$defs/DatasetDesign"
+        },
+        "tables": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TablePayload"
+          },
+          "title": "Tables",
+          "type": "object"
+        },
+        "documents": {
+          "items": {
+            "$ref": "#/$defs/DocPayload"
+          },
+          "title": "Documents",
+          "type": "array"
+        },
+        "answer_key": {
+          "additionalProperties": true,
+          "description": "模拟真值（若有）",
+          "title": "Answer Key",
+          "type": "object"
+        },
+        "is_synthetic": {
+          "const": true,
+          "default": true,
+          "description": "合规硬约束：必须为模拟数据",
+          "title": "Is Synthetic",
+          "type": "boolean"
+        },
+        "contains_real_patient_data": {
+          "const": false,
+          "default": false,
+          "title": "Contains Real Patient Data",
+          "type": "boolean"
+        }
+      },
+      "title": "SimulatedDatasetPayload",
+      "type": "object"
+    },
+    "TablePayload": {
+      "additionalProperties": false,
+      "description": "表格数据载荷。行数据内联，规模大时改用 ArtifactRef。",
+      "properties": {
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/ColumnSpec"
+          },
+          "title": "Columns",
+          "type": "array"
+        },
+        "rows": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Rows",
+          "type": "array"
+        },
+        "n_rows": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "N Rows"
+        },
+        "index_name": {
+          "default": "TODO",
+          "title": "Index Name",
+          "type": "string"
+        },
+        "artifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "表格落盘引用（可选）"
+        }
+      },
+      "title": "TablePayload",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "S1 模拟数据生成阶段的统一载荷契约",
+  "properties": {
+    "id": {
+      "description": "契约唯一 id，格式 stage-slug-hex",
+      "title": "Id",
+      "type": "string"
+    },
+    "source_skill": {
+      "description": "产出该载荷的技能 ID；非技能产出时用 generator:NAME / human:NAME",
+      "title": "Source Skill",
+      "type": "string"
+    },
+    "source_skill_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "技能在仓库中的相对路径（若适用）",
+      "title": "Source Skill Path"
+    },
+    "stage": {
+      "const": "S1_simulate",
+      "default": "S1_simulate",
+      "title": "Stage",
+      "type": "string"
+    },
+    "format": {
+      "description": "实际涉及的格式族（如 ['csv','pdf']）",
+      "items": {
+        "type": "string"
+      },
+      "title": "Format",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "payload": {
+      "$ref": "#/$defs/SimulatedDatasetPayload"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "provenance": {
+      "items": {
+        "$ref": "#/$defs/ProvenanceStep"
+      },
+      "title": "Provenance",
+      "type": "array"
+    },
+    "human_interventions": {
+      "description": "关联的 HumanInterventionRequest id",
+      "items": {
+        "type": "string"
+      },
+      "title": "Human Interventions",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    },
+    "notes": {
+      "default": "",
+      "title": "Notes",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "source_skill"
+  ],
+  "title": "SimulatedDataset",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://medical-research-skills.local/integration/simulated_dataset.schema.json",
+  "x-contract-version": "1.0.0",
+  "x-generated-by": "integration/data_contracts/build_schemas.py"
+}

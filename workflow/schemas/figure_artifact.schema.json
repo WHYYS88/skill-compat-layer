@@ -1,0 +1,271 @@
+{
+  "$defs": {
+    "FigureArtifactPayload": {
+      "additionalProperties": false,
+      "description": "S4 载荷：图形制品。\n\n任务书第 91 行硬要求：必须包含 image_path / legend / caption /\nstatistical_notes / source_analysis_id。",
+      "properties": {
+        "image_path": {
+          "description": "图形文件相对路径（必填）",
+          "title": "Image Path",
+          "type": "string"
+        },
+        "legend": {
+          "default": "TODO",
+          "description": "图注（legend）",
+          "title": "Legend",
+          "type": "string"
+        },
+        "caption": {
+          "default": "TODO",
+          "description": "正文引用用 caption",
+          "title": "Caption",
+          "type": "string"
+        },
+        "statistical_notes": {
+          "default": "TODO",
+          "description": "统计说明；未声明为 TODO，不得编造",
+          "title": "Statistical Notes",
+          "type": "string"
+        },
+        "source_analysis_id": {
+          "default": "TODO",
+          "description": "来源 AnalysisResult 契约 id",
+          "title": "Source Analysis Id",
+          "type": "string"
+        },
+        "figure_type": {
+          "default": "TODO",
+          "description": "volcano / km / forest / heatmap / ...",
+          "title": "Figure Type",
+          "type": "string"
+        },
+        "panel_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Panel Labels",
+          "type": "array"
+        },
+        "dpi": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dpi"
+        },
+        "width_in": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width In"
+        },
+        "height_in": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height In"
+        }
+      },
+      "required": [
+        "image_path"
+      ],
+      "title": "FigureArtifactPayload",
+      "type": "object"
+    },
+    "ProvenanceStep": {
+      "additionalProperties": false,
+      "description": "血缘链上的一步：哪个技能 / 适配器，什么时候，用什么参数产出了它。",
+      "properties": {
+        "kind": {
+          "enum": [
+            "skill",
+            "adapter",
+            "human",
+            "generator"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "ref": {
+          "description": "技能 ID 或适配器名（如 ai_to_ci.adapters.sim_to_clean）",
+          "title": "Ref",
+          "type": "string"
+        },
+        "skill_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "技能在仓库中的路径（若为技能）",
+          "title": "Skill Path"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "adapter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adapter"
+        },
+        "inputs": {
+          "description": "上游契约 id 列表",
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "ref"
+      ],
+      "title": "ProvenanceStep",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "S4 制图阶段的统一载荷契约",
+  "properties": {
+    "id": {
+      "description": "契约唯一 id，格式 stage-slug-hex",
+      "title": "Id",
+      "type": "string"
+    },
+    "source_skill": {
+      "description": "产出该载荷的技能 ID；非技能产出时用 generator:NAME / human:NAME",
+      "title": "Source Skill",
+      "type": "string"
+    },
+    "source_skill_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "技能在仓库中的相对路径（若适用）",
+      "title": "Source Skill Path"
+    },
+    "stage": {
+      "const": "S4_figure",
+      "default": "S4_figure",
+      "title": "Stage",
+      "type": "string"
+    },
+    "format": {
+      "description": "实际涉及的格式族（如 ['csv','pdf']）",
+      "items": {
+        "type": "string"
+      },
+      "title": "Format",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "payload": {
+      "$ref": "#/$defs/FigureArtifactPayload"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "provenance": {
+      "items": {
+        "$ref": "#/$defs/ProvenanceStep"
+      },
+      "title": "Provenance",
+      "type": "array"
+    },
+    "human_interventions": {
+      "description": "关联的 HumanInterventionRequest id",
+      "items": {
+        "type": "string"
+      },
+      "title": "Human Interventions",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    },
+    "notes": {
+      "default": "",
+      "title": "Notes",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "source_skill",
+    "payload"
+  ],
+  "title": "FigureArtifact",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://medical-research-skills.local/integration/figure_artifact.schema.json",
+  "x-contract-version": "1.0.0",
+  "x-generated-by": "integration/data_contracts/build_schemas.py"
+}

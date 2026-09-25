@@ -1,0 +1,2290 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://medical-research-skills.local/integration/all_contracts.schema.json",
+  "title": "AIToCI Unified Contracts",
+  "description": "五阶段统一中间数据契约的 JSON Schema 集合（阶段2 产物）",
+  "x-contract-version": "1.0.0",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/simulated_dataset.schema.json"
+    },
+    {
+      "$ref": "#/$defs/clean_dataset.schema.json"
+    },
+    {
+      "$ref": "#/$defs/analysis_result.schema.json"
+    },
+    {
+      "$ref": "#/$defs/figure_artifact.schema.json"
+    },
+    {
+      "$ref": "#/$defs/report_bundle.schema.json"
+    }
+  ],
+  "$defs": {
+    "simulated_dataset.schema.json": {
+      "$defs": {
+        "ArtifactRef": {
+          "additionalProperties": false,
+          "description": "文件制品引用。**不内嵌大文件**，只引用工作区内的相对路径。",
+          "properties": {
+            "path": {
+              "description": "工作区相对路径（POSIX 分隔符）",
+              "title": "Path",
+              "type": "string"
+            },
+            "format": {
+              "default": "unknown",
+              "title": "Format",
+              "type": "string"
+            },
+            "size_bytes": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Size Bytes"
+            },
+            "sha256": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Sha256"
+            },
+            "exists": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "写入/校验时探明的存在性",
+              "title": "Exists"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "title": "ArtifactRef",
+          "type": "object"
+        },
+        "ColumnSpec": {
+          "additionalProperties": false,
+          "description": "列级规格。name 必填；dtype/unit/description 未声明时保持 TODO。",
+          "properties": {
+            "name": {
+              "title": "Name",
+              "type": "string"
+            },
+            "dtype": {
+              "default": "TODO",
+              "description": "int/float/str/category/datetime 或 TODO",
+              "title": "Dtype",
+              "type": "string"
+            },
+            "unit": {
+              "default": "TODO",
+              "description": "计量单位（如 mg/dL），未声明为 TODO",
+              "title": "Unit",
+              "type": "string"
+            },
+            "description": {
+              "default": "TODO",
+              "title": "Description",
+              "type": "string"
+            },
+            "missing_count": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Missing Count"
+            },
+            "unique_count": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Unique Count"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "ColumnSpec",
+          "type": "object"
+        },
+        "DatasetDesign": {
+          "additionalProperties": false,
+          "description": "被模拟/被分析数据集的设计参数（用于可复现声明）。",
+          "properties": {
+            "n_samples": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "N Samples"
+            },
+            "n_features": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "N Features"
+            },
+            "groups": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "title": "Groups",
+              "type": "object"
+            },
+            "seed": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "随机种子；必须写入才算可复现",
+              "title": "Seed"
+            },
+            "missing_rate": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Missing Rate"
+            },
+            "notes": {
+              "default": "TODO",
+              "title": "Notes",
+              "type": "string"
+            }
+          },
+          "title": "DatasetDesign",
+          "type": "object"
+        },
+        "DocPayload": {
+          "additionalProperties": false,
+          "description": "文本/文档载荷（病例文本、方法学段落等）。",
+          "properties": {
+            "text": {
+              "default": "",
+              "title": "Text",
+              "type": "string"
+            },
+            "title": {
+              "default": "TODO",
+              "title": "Title",
+              "type": "string"
+            },
+            "language": {
+              "default": "TODO",
+              "description": "zh/en/... 未声明为 TODO",
+              "title": "Language",
+              "type": "string"
+            },
+            "sections": {
+              "items": {
+                "$ref": "#/$defs/ReportSection"
+              },
+              "title": "Sections",
+              "type": "array"
+            },
+            "artifact": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/ArtifactRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "title": "DocPayload",
+          "type": "object"
+        },
+        "ProvenanceStep": {
+          "additionalProperties": false,
+          "description": "血缘链上的一步：哪个技能 / 适配器，什么时候，用什么参数产出了它。",
+          "properties": {
+            "kind": {
+              "enum": [
+                "skill",
+                "adapter",
+                "human",
+                "generator"
+              ],
+              "title": "Kind",
+              "type": "string"
+            },
+            "ref": {
+              "description": "技能 ID 或适配器名（如 ai_to_ci.adapters.sim_to_clean）",
+              "title": "Ref",
+              "type": "string"
+            },
+            "skill_path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "技能在仓库中的路径（若为技能）",
+              "title": "Skill Path"
+            },
+            "at": {
+              "format": "date-time",
+              "title": "At",
+              "type": "string"
+            },
+            "adapter": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Adapter"
+            },
+            "inputs": {
+              "description": "上游契约 id 列表",
+              "items": {
+                "type": "string"
+              },
+              "title": "Inputs",
+              "type": "array"
+            },
+            "params": {
+              "additionalProperties": true,
+              "title": "Params",
+              "type": "object"
+            },
+            "note": {
+              "default": "",
+              "title": "Note",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "ref"
+          ],
+          "title": "ProvenanceStep",
+          "type": "object"
+        },
+        "ReportSection": {
+          "additionalProperties": false,
+          "properties": {
+            "heading": {
+              "title": "Heading",
+              "type": "string"
+            },
+            "body": {
+              "default": "",
+              "title": "Body",
+              "type": "string"
+            },
+            "figure_ids": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Figure Ids",
+              "type": "array"
+            },
+            "table_ids": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Table Ids",
+              "type": "array"
+            },
+            "order": {
+              "default": 0,
+              "title": "Order",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "heading"
+          ],
+          "title": "ReportSection",
+          "type": "object"
+        },
+        "SimulatedDatasetPayload": {
+          "additionalProperties": false,
+          "description": "S1 载荷：模拟数据。\n\n重要（对应审计结论 G1）：仓库内**没有**产出模拟数据集的技能，\n因此本载荷的典型生产者是 integration 自带生成器或人工投递的文件。",
+          "properties": {
+            "design": {
+              "$ref": "#/$defs/DatasetDesign"
+            },
+            "tables": {
+              "additionalProperties": {
+                "$ref": "#/$defs/TablePayload"
+              },
+              "title": "Tables",
+              "type": "object"
+            },
+            "documents": {
+              "items": {
+                "$ref": "#/$defs/DocPayload"
+              },
+              "title": "Documents",
+              "type": "array"
+            },
+            "answer_key": {
+              "additionalProperties": true,
+              "description": "模拟真值（若有）",
+              "title": "Answer Key",
+              "type": "object"
+            },
+            "is_synthetic": {
+              "const": true,
+              "default": true,
+              "description": "合规硬约束：必须为模拟数据",
+              "title": "Is Synthetic",
+              "type": "boolean"
+            },
+            "contains_real_patient_data": {
+              "const": false,
+              "default": false,
+              "title": "Contains Real Patient Data",
+              "type": "boolean"
+            }
+          },
+          "title": "SimulatedDatasetPayload",
+          "type": "object"
+        },
+        "TablePayload": {
+          "additionalProperties": false,
+          "description": "表格数据载荷。行数据内联，规模大时改用 ArtifactRef。",
+          "properties": {
+            "columns": {
+              "items": {
+                "$ref": "#/$defs/ColumnSpec"
+              },
+              "title": "Columns",
+              "type": "array"
+            },
+            "rows": {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "title": "Rows",
+              "type": "array"
+            },
+            "n_rows": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "N Rows"
+            },
+            "index_name": {
+              "default": "TODO",
+              "title": "Index Name",
+              "type": "string"
+            },
+            "artifact": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/ArtifactRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "表格落盘引用（可选）"
+            }
+          },
+          "title": "TablePayload",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "description": "S1：模拟数据生成 → 数据处理。",
+      "properties": {
+        "id": {
+          "description": "契约唯一 id，格式 stage-slug-hex",
+          "title": "Id",
+          "type": "string"
+        },
+        "source_skill": {
+          "description": "产出该载荷的技能 ID；非技能产出时用 generator:NAME / human:NAME",
+          "title": "Source Skill",
+          "type": "string"
+        },
+        "source_skill_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "技能在仓库中的相对路径（若适用）",
+          "title": "Source Skill Path"
+        },
+        "stage": {
+          "const": "S1_simulate",
+          "default": "S1_simulate",
+          "title": "Stage",
+          "type": "string"
+        },
+        "format": {
+          "description": "实际涉及的格式族（如 ['csv','pdf']）",
+          "items": {
+            "type": "string"
+          },
+          "title": "Format",
+          "type": "array"
+        },
+        "schema_version": {
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/SimulatedDatasetPayload"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "provenance": {
+          "items": {
+            "$ref": "#/$defs/ProvenanceStep"
+          },
+          "title": "Provenance",
+          "type": "array"
+        },
+        "human_interventions": {
+          "description": "关联的 HumanInterventionRequest id",
+          "items": {
+            "type": "string"
+          },
+          "title": "Human Interventions",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated At"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source_skill"
+      ],
+      "title": "SimulatedDataset",
+      "type": "object"
+    },
+    "clean_dataset.schema.json": {
+      "$defs": {
+        "ArtifactRef": {
+          "additionalProperties": false,
+          "description": "文件制品引用。**不内嵌大文件**，只引用工作区内的相对路径。",
+          "properties": {
+            "path": {
+              "description": "工作区相对路径（POSIX 分隔符）",
+              "title": "Path",
+              "type": "string"
+            },
+            "format": {
+              "default": "unknown",
+              "title": "Format",
+              "type": "string"
+            },
+            "size_bytes": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Size Bytes"
+            },
+            "sha256": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Sha256"
+            },
+            "exists": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "写入/校验时探明的存在性",
+              "title": "Exists"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "title": "ArtifactRef",
+          "type": "object"
+        },
+        "CleanDatasetPayload": {
+          "additionalProperties": false,
+          "description": "S2 载荷：清洗/规范化后的数据集。",
+          "properties": {
+            "tables": {
+              "additionalProperties": {
+                "$ref": "#/$defs/TablePayload"
+              },
+              "title": "Tables",
+              "type": "object"
+            },
+            "features": {
+              "additionalProperties": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "title": "Features",
+              "type": "object"
+            },
+            "group_labels": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "sample_id -> group",
+              "title": "Group Labels",
+              "type": "object"
+            },
+            "normalization": {
+              "default": "TODO",
+              "description": "log2 / zscore / minmax / combat / TODO",
+              "title": "Normalization",
+              "type": "string"
+            },
+            "batch_corrected": {
+              "default": false,
+              "title": "Batch Corrected",
+              "type": "boolean"
+            },
+            "dropped_columns": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Dropped Columns",
+              "type": "array"
+            },
+            "imputation": {
+              "default": "TODO",
+              "title": "Imputation",
+              "type": "string"
+            }
+          },
+          "title": "CleanDatasetPayload",
+          "type": "object"
+        },
+        "ColumnSpec": {
+          "additionalProperties": false,
+          "description": "列级规格。name 必填；dtype/unit/description 未声明时保持 TODO。",
+          "properties": {
+            "name": {
+              "title": "Name",
+              "type": "string"
+            },
+            "dtype": {
+              "default": "TODO",
+              "description": "int/float/str/category/datetime 或 TODO",
+              "title": "Dtype",
+              "type": "string"
+            },
+            "unit": {
+              "default": "TODO",
+              "description": "计量单位（如 mg/dL），未声明为 TODO",
+              "title": "Unit",
+              "type": "string"
+            },
+            "description": {
+              "default": "TODO",
+              "title": "Description",
+              "type": "string"
+            },
+            "missing_count": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Missing Count"
+            },
+            "unique_count": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Unique Count"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "ColumnSpec",
+          "type": "object"
+        },
+        "ProvenanceStep": {
+          "additionalProperties": false,
+          "description": "血缘链上的一步：哪个技能 / 适配器，什么时候，用什么参数产出了它。",
+          "properties": {
+            "kind": {
+              "enum": [
+                "skill",
+                "adapter",
+                "human",
+                "generator"
+              ],
+              "title": "Kind",
+              "type": "string"
+            },
+            "ref": {
+              "description": "技能 ID 或适配器名（如 ai_to_ci.adapters.sim_to_clean）",
+              "title": "Ref",
+              "type": "string"
+            },
+            "skill_path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "技能在仓库中的路径（若为技能）",
+              "title": "Skill Path"
+            },
+            "at": {
+              "format": "date-time",
+              "title": "At",
+              "type": "string"
+            },
+            "adapter": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Adapter"
+            },
+            "inputs": {
+              "description": "上游契约 id 列表",
+              "items": {
+                "type": "string"
+              },
+              "title": "Inputs",
+              "type": "array"
+            },
+            "params": {
+              "additionalProperties": true,
+              "title": "Params",
+              "type": "object"
+            },
+            "note": {
+              "default": "",
+              "title": "Note",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "ref"
+          ],
+          "title": "ProvenanceStep",
+          "type": "object"
+        },
+        "TablePayload": {
+          "additionalProperties": false,
+          "description": "表格数据载荷。行数据内联，规模大时改用 ArtifactRef。",
+          "properties": {
+            "columns": {
+              "items": {
+                "$ref": "#/$defs/ColumnSpec"
+              },
+              "title": "Columns",
+              "type": "array"
+            },
+            "rows": {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "title": "Rows",
+              "type": "array"
+            },
+            "n_rows": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "N Rows"
+            },
+            "index_name": {
+              "default": "TODO",
+              "title": "Index Name",
+              "type": "string"
+            },
+            "artifact": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/ArtifactRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "表格落盘引用（可选）"
+            }
+          },
+          "title": "TablePayload",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "description": "S2：数据处理 → 数据分析。",
+      "properties": {
+        "id": {
+          "description": "契约唯一 id，格式 stage-slug-hex",
+          "title": "Id",
+          "type": "string"
+        },
+        "source_skill": {
+          "description": "产出该载荷的技能 ID；非技能产出时用 generator:NAME / human:NAME",
+          "title": "Source Skill",
+          "type": "string"
+        },
+        "source_skill_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "技能在仓库中的相对路径（若适用）",
+          "title": "Source Skill Path"
+        },
+        "stage": {
+          "const": "S2_process",
+          "default": "S2_process",
+          "title": "Stage",
+          "type": "string"
+        },
+        "format": {
+          "description": "实际涉及的格式族（如 ['csv','pdf']）",
+          "items": {
+            "type": "string"
+          },
+          "title": "Format",
+          "type": "array"
+        },
+        "schema_version": {
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/CleanDatasetPayload"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "provenance": {
+          "items": {
+            "$ref": "#/$defs/ProvenanceStep"
+          },
+          "title": "Provenance",
+          "type": "array"
+        },
+        "human_interventions": {
+          "description": "关联的 HumanInterventionRequest id",
+          "items": {
+            "type": "string"
+          },
+          "title": "Human Interventions",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated At"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source_skill"
+      ],
+      "title": "CleanDataset",
+      "type": "object"
+    },
+    "analysis_result.schema.json": {
+      "$defs": {
+        "AnalysisResultPayload": {
+          "additionalProperties": false,
+          "description": "S3 载荷：统计/建模结果。",
+          "properties": {
+            "method": {
+              "default": "TODO",
+              "description": "lasso / cox / deseq2 / limma / TODO",
+              "title": "Method",
+              "type": "string"
+            },
+            "metrics": {
+              "items": {
+                "$ref": "#/$defs/MetricSpec"
+              },
+              "title": "Metrics",
+              "type": "array"
+            },
+            "result_tables": {
+              "additionalProperties": {
+                "$ref": "#/$defs/TablePayload"
+              },
+              "title": "Result Tables",
+              "type": "object"
+            },
+            "model_kind": {
+              "default": "TODO",
+              "title": "Model Kind",
+              "type": "string"
+            },
+            "n_features": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "N Features"
+            },
+            "artifacts": {
+              "items": {
+                "$ref": "#/$defs/ArtifactRef"
+              },
+              "title": "Artifacts",
+              "type": "array"
+            },
+            "warnings": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Warnings",
+              "type": "array"
+            }
+          },
+          "title": "AnalysisResultPayload",
+          "type": "object"
+        },
+        "ArtifactRef": {
+          "additionalProperties": false,
+          "description": "文件制品引用。**不内嵌大文件**，只引用工作区内的相对路径。",
+          "properties": {
+            "path": {
+              "description": "工作区相对路径（POSIX 分隔符）",
+              "title": "Path",
+              "type": "string"
+            },
+            "format": {
+              "default": "unknown",
+              "title": "Format",
+              "type": "string"
+            },
+            "size_bytes": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Size Bytes"
+            },
+            "sha256": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Sha256"
+            },
+            "exists": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "写入/校验时探明的存在性",
+              "title": "Exists"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "title": "ArtifactRef",
+          "type": "object"
+        },
+        "ColumnSpec": {
+          "additionalProperties": false,
+          "description": "列级规格。name 必填；dtype/unit/description 未声明时保持 TODO。",
+          "properties": {
+            "name": {
+              "title": "Name",
+              "type": "string"
+            },
+            "dtype": {
+              "default": "TODO",
+              "description": "int/float/str/category/datetime 或 TODO",
+              "title": "Dtype",
+              "type": "string"
+            },
+            "unit": {
+              "default": "TODO",
+              "description": "计量单位（如 mg/dL），未声明为 TODO",
+              "title": "Unit",
+              "type": "string"
+            },
+            "description": {
+              "default": "TODO",
+              "title": "Description",
+              "type": "string"
+            },
+            "missing_count": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Missing Count"
+            },
+            "unique_count": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Unique Count"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "ColumnSpec",
+          "type": "object"
+        },
+        "MetricSpec": {
+          "additionalProperties": false,
+          "description": "统计指标。缺失统计量一律留空并在 validate() 中报 warning，**不得编造**。",
+          "properties": {
+            "name": {
+              "description": "如 log2FoldChange / p_value / hazard_ratio / auc",
+              "title": "Name",
+              "type": "string"
+            },
+            "value": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Value"
+            },
+            "ci_low": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Ci Low"
+            },
+            "ci_high": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Ci High"
+            },
+            "p_value": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "P Value"
+            },
+            "n": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "N"
+            },
+            "unit": {
+              "default": "TODO",
+              "title": "Unit",
+              "type": "string"
+            },
+            "method": {
+              "default": "TODO",
+              "description": "统计方法，未声明为 TODO",
+              "title": "Method",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "MetricSpec",
+          "type": "object"
+        },
+        "ProvenanceStep": {
+          "additionalProperties": false,
+          "description": "血缘链上的一步：哪个技能 / 适配器，什么时候，用什么参数产出了它。",
+          "properties": {
+            "kind": {
+              "enum": [
+                "skill",
+                "adapter",
+                "human",
+                "generator"
+              ],
+              "title": "Kind",
+              "type": "string"
+            },
+            "ref": {
+              "description": "技能 ID 或适配器名（如 ai_to_ci.adapters.sim_to_clean）",
+              "title": "Ref",
+              "type": "string"
+            },
+            "skill_path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "技能在仓库中的路径（若为技能）",
+              "title": "Skill Path"
+            },
+            "at": {
+              "format": "date-time",
+              "title": "At",
+              "type": "string"
+            },
+            "adapter": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Adapter"
+            },
+            "inputs": {
+              "description": "上游契约 id 列表",
+              "items": {
+                "type": "string"
+              },
+              "title": "Inputs",
+              "type": "array"
+            },
+            "params": {
+              "additionalProperties": true,
+              "title": "Params",
+              "type": "object"
+            },
+            "note": {
+              "default": "",
+              "title": "Note",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "ref"
+          ],
+          "title": "ProvenanceStep",
+          "type": "object"
+        },
+        "TablePayload": {
+          "additionalProperties": false,
+          "description": "表格数据载荷。行数据内联，规模大时改用 ArtifactRef。",
+          "properties": {
+            "columns": {
+              "items": {
+                "$ref": "#/$defs/ColumnSpec"
+              },
+              "title": "Columns",
+              "type": "array"
+            },
+            "rows": {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "title": "Rows",
+              "type": "array"
+            },
+            "n_rows": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "N Rows"
+            },
+            "index_name": {
+              "default": "TODO",
+              "title": "Index Name",
+              "type": "string"
+            },
+            "artifact": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/ArtifactRef"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "表格落盘引用（可选）"
+            }
+          },
+          "title": "TablePayload",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "description": "S3：数据分析 → 制图。",
+      "properties": {
+        "id": {
+          "description": "契约唯一 id，格式 stage-slug-hex",
+          "title": "Id",
+          "type": "string"
+        },
+        "source_skill": {
+          "description": "产出该载荷的技能 ID；非技能产出时用 generator:NAME / human:NAME",
+          "title": "Source Skill",
+          "type": "string"
+        },
+        "source_skill_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "技能在仓库中的相对路径（若适用）",
+          "title": "Source Skill Path"
+        },
+        "stage": {
+          "const": "S3_analyze",
+          "default": "S3_analyze",
+          "title": "Stage",
+          "type": "string"
+        },
+        "format": {
+          "description": "实际涉及的格式族（如 ['csv','pdf']）",
+          "items": {
+            "type": "string"
+          },
+          "title": "Format",
+          "type": "array"
+        },
+        "schema_version": {
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/AnalysisResultPayload"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "provenance": {
+          "items": {
+            "$ref": "#/$defs/ProvenanceStep"
+          },
+          "title": "Provenance",
+          "type": "array"
+        },
+        "human_interventions": {
+          "description": "关联的 HumanInterventionRequest id",
+          "items": {
+            "type": "string"
+          },
+          "title": "Human Interventions",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated At"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source_skill"
+      ],
+      "title": "AnalysisResult",
+      "type": "object"
+    },
+    "figure_artifact.schema.json": {
+      "$defs": {
+        "FigureArtifactPayload": {
+          "additionalProperties": false,
+          "description": "S4 载荷：图形制品。\n\n任务书第 91 行硬要求：必须包含 image_path / legend / caption /\nstatistical_notes / source_analysis_id。",
+          "properties": {
+            "image_path": {
+              "description": "图形文件相对路径（必填）",
+              "title": "Image Path",
+              "type": "string"
+            },
+            "legend": {
+              "default": "TODO",
+              "description": "图注（legend）",
+              "title": "Legend",
+              "type": "string"
+            },
+            "caption": {
+              "default": "TODO",
+              "description": "正文引用用 caption",
+              "title": "Caption",
+              "type": "string"
+            },
+            "statistical_notes": {
+              "default": "TODO",
+              "description": "统计说明；未声明为 TODO，不得编造",
+              "title": "Statistical Notes",
+              "type": "string"
+            },
+            "source_analysis_id": {
+              "default": "TODO",
+              "description": "来源 AnalysisResult 契约 id",
+              "title": "Source Analysis Id",
+              "type": "string"
+            },
+            "figure_type": {
+              "default": "TODO",
+              "description": "volcano / km / forest / heatmap / ...",
+              "title": "Figure Type",
+              "type": "string"
+            },
+            "panel_labels": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Panel Labels",
+              "type": "array"
+            },
+            "dpi": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Dpi"
+            },
+            "width_in": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Width In"
+            },
+            "height_in": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Height In"
+            }
+          },
+          "required": [
+            "image_path"
+          ],
+          "title": "FigureArtifactPayload",
+          "type": "object"
+        },
+        "ProvenanceStep": {
+          "additionalProperties": false,
+          "description": "血缘链上的一步：哪个技能 / 适配器，什么时候，用什么参数产出了它。",
+          "properties": {
+            "kind": {
+              "enum": [
+                "skill",
+                "adapter",
+                "human",
+                "generator"
+              ],
+              "title": "Kind",
+              "type": "string"
+            },
+            "ref": {
+              "description": "技能 ID 或适配器名（如 ai_to_ci.adapters.sim_to_clean）",
+              "title": "Ref",
+              "type": "string"
+            },
+            "skill_path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "技能在仓库中的路径（若为技能）",
+              "title": "Skill Path"
+            },
+            "at": {
+              "format": "date-time",
+              "title": "At",
+              "type": "string"
+            },
+            "adapter": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Adapter"
+            },
+            "inputs": {
+              "description": "上游契约 id 列表",
+              "items": {
+                "type": "string"
+              },
+              "title": "Inputs",
+              "type": "array"
+            },
+            "params": {
+              "additionalProperties": true,
+              "title": "Params",
+              "type": "object"
+            },
+            "note": {
+              "default": "",
+              "title": "Note",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "ref"
+          ],
+          "title": "ProvenanceStep",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "description": "S4：制图 → 报告生成。",
+      "properties": {
+        "id": {
+          "description": "契约唯一 id，格式 stage-slug-hex",
+          "title": "Id",
+          "type": "string"
+        },
+        "source_skill": {
+          "description": "产出该载荷的技能 ID；非技能产出时用 generator:NAME / human:NAME",
+          "title": "Source Skill",
+          "type": "string"
+        },
+        "source_skill_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "技能在仓库中的相对路径（若适用）",
+          "title": "Source Skill Path"
+        },
+        "stage": {
+          "const": "S4_figure",
+          "default": "S4_figure",
+          "title": "Stage",
+          "type": "string"
+        },
+        "format": {
+          "description": "实际涉及的格式族（如 ['csv','pdf']）",
+          "items": {
+            "type": "string"
+          },
+          "title": "Format",
+          "type": "array"
+        },
+        "schema_version": {
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/FigureArtifactPayload"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "provenance": {
+          "items": {
+            "$ref": "#/$defs/ProvenanceStep"
+          },
+          "title": "Provenance",
+          "type": "array"
+        },
+        "human_interventions": {
+          "description": "关联的 HumanInterventionRequest id",
+          "items": {
+            "type": "string"
+          },
+          "title": "Human Interventions",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated At"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source_skill",
+        "payload"
+      ],
+      "title": "FigureArtifact",
+      "type": "object"
+    },
+    "report_bundle.schema.json": {
+      "$defs": {
+        "ProvenanceStep": {
+          "additionalProperties": false,
+          "description": "血缘链上的一步：哪个技能 / 适配器，什么时候，用什么参数产出了它。",
+          "properties": {
+            "kind": {
+              "enum": [
+                "skill",
+                "adapter",
+                "human",
+                "generator"
+              ],
+              "title": "Kind",
+              "type": "string"
+            },
+            "ref": {
+              "description": "技能 ID 或适配器名（如 ai_to_ci.adapters.sim_to_clean）",
+              "title": "Ref",
+              "type": "string"
+            },
+            "skill_path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "技能在仓库中的路径（若为技能）",
+              "title": "Skill Path"
+            },
+            "at": {
+              "format": "date-time",
+              "title": "At",
+              "type": "string"
+            },
+            "adapter": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Adapter"
+            },
+            "inputs": {
+              "description": "上游契约 id 列表",
+              "items": {
+                "type": "string"
+              },
+              "title": "Inputs",
+              "type": "array"
+            },
+            "params": {
+              "additionalProperties": true,
+              "title": "Params",
+              "type": "object"
+            },
+            "note": {
+              "default": "",
+              "title": "Note",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "ref"
+          ],
+          "title": "ProvenanceStep",
+          "type": "object"
+        },
+        "ReportBundlePayload": {
+          "additionalProperties": false,
+          "description": "S5 载荷：报告包。",
+          "properties": {
+            "title": {
+              "default": "TODO",
+              "title": "Title",
+              "type": "string"
+            },
+            "sections": {
+              "items": {
+                "$ref": "#/$defs/ReportSection"
+              },
+              "title": "Sections",
+              "type": "array"
+            },
+            "figures": {
+              "description": "FigureArtifact 契约 id 列表",
+              "items": {
+                "type": "string"
+              },
+              "title": "Figures",
+              "type": "array"
+            },
+            "tables": {
+              "description": "AnalysisResult 契约 id 列表",
+              "items": {
+                "type": "string"
+              },
+              "title": "Tables",
+              "type": "array"
+            },
+            "markdown_path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Markdown Path"
+            },
+            "docx_path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Docx Path"
+            },
+            "citations": {
+              "description": "引用文献（不得编造）",
+              "items": {
+                "type": "string"
+              },
+              "title": "Citations",
+              "type": "array"
+            },
+            "reporting_guideline": {
+              "default": "TODO",
+              "description": "CONSORT/STROBE/PRISMA/TRIPOD/... 未声明为 TODO",
+              "title": "Reporting Guideline",
+              "type": "string"
+            }
+          },
+          "title": "ReportBundlePayload",
+          "type": "object"
+        },
+        "ReportSection": {
+          "additionalProperties": false,
+          "properties": {
+            "heading": {
+              "title": "Heading",
+              "type": "string"
+            },
+            "body": {
+              "default": "",
+              "title": "Body",
+              "type": "string"
+            },
+            "figure_ids": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Figure Ids",
+              "type": "array"
+            },
+            "table_ids": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Table Ids",
+              "type": "array"
+            },
+            "order": {
+              "default": 0,
+              "title": "Order",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "heading"
+          ],
+          "title": "ReportSection",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "description": "S5：报告生成（终点）。",
+      "properties": {
+        "id": {
+          "description": "契约唯一 id，格式 stage-slug-hex",
+          "title": "Id",
+          "type": "string"
+        },
+        "source_skill": {
+          "description": "产出该载荷的技能 ID；非技能产出时用 generator:NAME / human:NAME",
+          "title": "Source Skill",
+          "type": "string"
+        },
+        "source_skill_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "技能在仓库中的相对路径（若适用）",
+          "title": "Source Skill Path"
+        },
+        "stage": {
+          "const": "S5_report",
+          "default": "S5_report",
+          "title": "Stage",
+          "type": "string"
+        },
+        "format": {
+          "description": "实际涉及的格式族（如 ['csv','pdf']）",
+          "items": {
+            "type": "string"
+          },
+          "title": "Format",
+          "type": "array"
+        },
+        "schema_version": {
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/ReportBundlePayload"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "provenance": {
+          "items": {
+            "$ref": "#/$defs/ProvenanceStep"
+          },
+          "title": "Provenance",
+          "type": "array"
+        },
+        "human_interventions": {
+          "description": "关联的 HumanInterventionRequest id",
+          "items": {
+            "type": "string"
+          },
+          "title": "Human Interventions",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated At"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source_skill"
+      ],
+      "title": "ReportBundle",
+      "type": "object"
+    },
+    "human_intervention_request.schema.json": {
+      "$defs": {
+        "HumanInterventionReason": {
+          "description": "人工介入的结构化原因（适配器必须用这些枚举，不允许自由文本代替）。",
+          "enum": [
+            "prompt_only_skill",
+            "entry_not_documented",
+            "format_undeclared",
+            "dependency_undeclared",
+            "payload_schema_mismatch",
+            "unsupported_transformation",
+            "ambiguous_semantics",
+            "data_quality_blocker",
+            "renderer_unavailable"
+          ],
+          "title": "HumanInterventionReason",
+          "type": "string"
+        },
+        "Stage": {
+          "description": "五阶段流水线（与 docs/skill_inventory.md 的代号一致）。",
+          "enum": [
+            "S1_simulate",
+            "S2_process",
+            "S3_analyze",
+            "S4_figure",
+            "S5_report"
+          ],
+          "title": "Stage",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "结构化人工介入请求。\n\n任务书第 52/94 行：适配器遇到无法自动兼容的断点时**必须抛出本对象**，\n而不是只打印日志。三个必填语义：当前卡点 / 需要人类提供的数据格式 / 建议操作步骤。",
+      "properties": {
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        },
+        "contract_id": {
+          "default": "TODO",
+          "description": "涉及的契约 id；未知为 TODO",
+          "title": "Contract Id",
+          "type": "string"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Stage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "adapter": {
+          "description": "发起请求的适配器模块名",
+          "title": "Adapter",
+          "type": "string"
+        },
+        "source_skill": {
+          "default": "TODO",
+          "title": "Source Skill",
+          "type": "string"
+        },
+        "blocker": {
+          "description": "当前卡点（现象）",
+          "title": "Blocker",
+          "type": "string"
+        },
+        "blocker_code": {
+          "$ref": "#/$defs/HumanInterventionReason"
+        },
+        "required_format": {
+          "description": "需要人类提供的具体数据格式（或需要确认的字段）",
+          "title": "Required Format",
+          "type": "string"
+        },
+        "required_fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Fields",
+          "type": "array"
+        },
+        "suggested_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Suggested Actions",
+          "type": "array"
+        },
+        "evidence": {
+          "description": "可复现的证据（文件路径/命令）",
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "severity": {
+          "default": "blocking",
+          "enum": [
+            "blocking",
+            "degraded"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "adapter",
+        "blocker",
+        "blocker_code",
+        "required_format"
+      ],
+      "title": "HumanInterventionRequest",
+      "type": "object"
+    },
+    "provenance_step.schema.json": {
+      "additionalProperties": false,
+      "description": "血缘链上的一步：哪个技能 / 适配器，什么时候，用什么参数产出了它。",
+      "properties": {
+        "kind": {
+          "enum": [
+            "skill",
+            "adapter",
+            "human",
+            "generator"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "ref": {
+          "description": "技能 ID 或适配器名（如 ai_to_ci.adapters.sim_to_clean）",
+          "title": "Ref",
+          "type": "string"
+        },
+        "skill_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "技能在仓库中的路径（若为技能）",
+          "title": "Skill Path"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "adapter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adapter"
+        },
+        "inputs": {
+          "description": "上游契约 id 列表",
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "ref"
+      ],
+      "title": "ProvenanceStep",
+      "type": "object"
+    },
+    "validation_report.schema.json": {
+      "$defs": {
+        "ValidationIssue": {
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "title": "Code",
+              "type": "string"
+            },
+            "message": {
+              "title": "Message",
+              "type": "string"
+            },
+            "field_path": {
+              "default": "",
+              "title": "Field Path",
+              "type": "string"
+            },
+            "severity": {
+              "default": "error",
+              "enum": [
+                "error",
+                "warning"
+              ],
+              "title": "Severity",
+              "type": "string"
+            },
+            "hint": {
+              "default": "",
+              "title": "Hint",
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "title": "ValidationIssue",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "description": "validate() 的返回值：结构化、可序列化，便于适配器决策。",
+      "properties": {
+        "contract_id": {
+          "title": "Contract Id",
+          "type": "string"
+        },
+        "contract_type": {
+          "title": "Contract Type",
+          "type": "string"
+        },
+        "schema_version": {
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "checked_at": {
+          "format": "date-time",
+          "title": "Checked At",
+          "type": "string"
+        },
+        "errors": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "title": "Errors",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contract_id",
+        "contract_type",
+        "schema_version"
+      ],
+      "title": "ValidationReport",
+      "type": "object"
+    }
+  }
+}
